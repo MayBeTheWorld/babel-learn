@@ -28,7 +28,9 @@ const ast = parser.parse(sourceCode, {
 const targetCalleeName = ['log', 'info', 'error', 'debug'].map(item => `console.${item}`);
 traverse(ast, {
     CallExpression(path, state) {
-        const calleeName = generate(path.node.callee).code;
+        // 获取当前函数调用节点中被调用部分（callee）的源代码字符串表示
+        const calleeName = generate(path.node.callee).code; // 也可以写成 const calleeName = path.get('callee').toString()
+        // 将 if 的判断条件简化 
          if (targetCalleeName.includes(calleeName)) {
             const { line, column } = path.node.loc.start;
             path.node.arguments.unshift(types.stringLiteral(`filename: (${line}, ${column})`))
